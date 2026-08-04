@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0d0b10" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>宝宝工作辛苦了</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #0d0b10;
+        --warm-white: #fff9f8;
+        --muted: rgba(255, 239, 238, 0.56);
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--ink);
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 50% 38%, rgba(117, 76, 91, 0.13), transparent 38%),
+          radial-gradient(circle at 50% 86%, rgba(255, 220, 222, 0.035), transparent 34%);
+      }
+
+      canvas {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .vignette {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at center, transparent 42%, rgba(0, 0, 0, 0.4) 120%);
+      }
+
+      .message {
+        position: fixed;
+        top: 69%;
+        left: 50%;
+        width: min(86vw, 420px);
+        margin: 0;
+        transform: translate(-50%, 14px);
+        color: var(--warm-white);
+        text-align: center;
+        font-size: clamp(22px, 6.1vw, 30px);
+        font-weight: 450;
+        letter-spacing: 0.16em;
+        line-height: 1.4;
+        opacity: 0;
+        text-shadow: 0 0 22px rgba(255, 208, 214, 0.34);
+        transition: none;
+        pointer-events: none;
+        will-change: opacity, transform;
+      }
+
+      .message::after {
+        content: "";
+        display: block;
+        width: 30px;
+        height: 1px;
+        margin: 17px auto 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 228, 228, 0.68), transparent);
+      }
+
+      .hint {
+        position: fixed;
+        left: 50%;
+        bottom: calc(24px + env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        white-space: nowrap;
+        opacity: 0;
+        animation: hint-in 1s ease 7.8s forwards;
+        pointer-events: none;
+      }
+
+      .fullscreen {
+        position: fixed;
+        right: 18px;
+        top: calc(16px + env(safe-area-inset-top));
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255, 234, 235, 0.12);
+        border-radius: 50%;
+        color: rgba(255, 240, 241, 0.62);
+        background: rgba(255, 255, 255, 0.035);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+
+      .fullscreen:active {
+        transform: scale(0.94);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .fullscreen svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      @keyframes hint-in {
+        to { opacity: 1; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hint { animation-delay: 0.3s; }
+      }
+    </style>
+  </head>
+  <body aria-label="淡粉粒子汇聚成爱心的动画，文字为宝宝工作辛苦了">
+    <canvas id="heartCanvas" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <p class="message" id="message">宝宝工作辛苦了</p>
+    <p class="hint">轻触屏幕 · 再看一次</p>
+    <button class="fullscreen" id="fullscreen" type="button" aria-label="全屏播放">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" />
+      </svg>
+    </button>
+
+    <script>
+      (() => {
+        const canvas = document.getElementById("heartCanvas");
+        const ctx = canvas.getContext("2d", { alpha: false });
+        const message = document.getElementById("message");
+        const fullscreen = document.getElementById("fullscreen");
+        const TAU = Math.PI * 2;
+        const CYCLE = 9800;
+        const palette = [
+          [255, 250, 249],
+          [255, 229, 231],
+          [242, 196, 203],
+          [218, 161, 174],
+          [255, 216, 220]
+        ];
+
+        let width = 0;
+        let height = 0;
+        let dpr = 1;
+        let particles = [];
+        let stars = [];
+        let startedAt = performance.now();
+        let raf = 0;
+
+        const clamp = (n, a = 0, b = 1) => Math.max(a, Math.min(b, n));
+        const mix = (a, b, t) => a + (b - a) * t;
+        const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+        const easeInCubic = t => t * t * t;
+        const easeInOutSine = t => -(Math.cos(Math.PI * t) - 1) / 2;
+
+        function makeStart(margin) {
+          const edge = Math.floor(Math.random() * 4);
+          if (edge === 0) return { x: Math.random() * width, y: -margin };
+          if (edge === 1) return { x: width + margin, y: Math.random() * height };
+          if (edge === 2) return { x: Math.random() * width, y: height + margin };
+          return { x: -margin, y: Math.random() * height };
+        }
+
+        function heartPoint() {
+          const t = Math.random() * TAU;
+          const outline = Math.random() < 0.48;
+          const radius = outline
+            ? 0.83 + Math.random() * 0.18
+            : Math.sqrt(Math.random()) * 0.86;
+          const hx = 16 * Math.pow(Math.sin(t), 3);
+          const hy = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+          const scale = Math.min(width / 39, height / 54);
+          return {
+            x: width * 0.5 + hx * scale * radius + (Math.random() - 0.5) * 1.5,
+            y: height * 0.42 - hy * scale * radius + (Math.random() - 0.5) * 1.5
+          };
+        }
+
+        function buildScene() {
+          const area = width * height;
+          const count = Math.round(clamp(area / 270, 920, 1580));
+          particles = Array.from({ length: count }, (_, index) => {
+            const start = makeStart(26 + Math.random() * 100);
+            const target = heartPoint();
+            const rgb = palette[Math.floor(Math.random() * palette.length)];
+            const windLeft = Math.random() < 0.12;
+            return {
+              sx: start.x,
+              sy: start.y,
+              tx: target.x,
+              ty: target.y,
+              delay: Math.random() * 720 + (index % 11) * 16,
+              duration: 2450 + Math.random() * 650,
+              curveX: (Math.random() - 0.5) * Math.min(width, 320) * 0.8,
+              curveY: (Math.random() - 0.5) * Math.min(height, 620) * 0.32,
+              windX: (windLeft ? -1 : 1) * width * (0.48 + Math.random() * 1.25),
+              windY: height * (Math.random() - 0.62) * 0.62,
+              flutter: 10 + Math.random() * 30,
+              phase: Math.random() * TAU,
+              size: 0.55 + Math.random() * 1.65,
+              alpha: 0.52 + Math.random() * 0.48,
+              rgb
+            };
+          });
+
+          stars = Array.from({ length: Math.round(clamp(area / 9200, 30, 70)) }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            r: 0.25 + Math.random() * 0.7,
+            a: 0.05 + Math.random() * 0.14,
+            phase: Math.random() * TAU
+          }));
+        }
+
+        function resize() {
+          const nextW = window.innerWidth;
+          const nextH = window.innerHeight;
+          dpr = Math.min(window.devicePixelRatio || 1, 1.8);
+          width = nextW;
+          height = nextH;
+          canvas.width = Math.round(width * dpr);
+          canvas.height = Math.round(height * dpr);
+          canvas.style.width = width + "px";
+          canvas.style.height = height + "px";
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          buildScene();
+          startedAt = performance.now();
+        }
+
+        function drawBackground(now) {
+          ctx.fillStyle = "#0d0b10";
+          ctx.fillRect(0, 0, width, height);
+          const glow = ctx.createRadialGradient(width * 0.5, height * 0.42, 0, width * 0.5, height * 0.42, Math.max(width, height) * 0.54);
+          glow.addColorStop(0, "rgba(82, 47, 60, 0.22)");
+          glow.addColorStop(0.48, "rgba(36, 24, 31, 0.09)");
+          glow.addColorStop(1, "rgba(13, 11, 16, 0)");
+          ctx.fillStyle = glow;
+          ctx.fillRect(0, 0, width, height);
+
+          for (const star of stars) {
+            const twinkle = 0.68 + Math.sin(now * 0.0011 + star.phase) * 0.32;
+            ctx.fillStyle = `rgba(255, 231, 233, ${star.a * twinkle})`;
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.r, 0, TAU);
+            ctx.fill();
+          }
+        }
+
+        function particleState(particle, time) {
+          if (time < 3900) {
+            const raw = clamp((time - particle.delay) / particle.duration);
+            const e = easeOutCubic(raw);
+            const curve = Math.sin(Math.PI * raw) * (1 - raw * 0.45);
+            return {
+              x: mix(particle.sx, particle.tx, e) + particle.curveX * curve,
+              y: mix(particle.sy, particle.ty, e) + particle.curveY * curve,
+              alpha: particle.alpha * (0.1 + raw * 0.9),
+              size: particle.size * (0.72 + raw * 0.28)
+            };
+          }
+
+          if (time < 6250) {
+            const hold = (time - 3900) / 2350;
+            const breathe = Math.sin(hold * Math.PI * 3) * 0.014;
+            const cx = width * 0.5;
+            const cy = height * 0.42;
+            return {
+              x: cx + (particle.tx - cx) * (1 + breathe) + Math.sin(hold * 8 + particle.phase) * 0.55,
+              y: cy + (particle.ty - cy) * (1 + breathe) + Math.cos(hold * 7 + particle.phase) * 0.55,
+              alpha: particle.alpha,
+              size: particle.size * (1 + breathe * 5)
+            };
+          }
+
+          const raw = clamp((time - 6250) / 2850);
+          const e = easeInCubic(raw);
+          return {
+            x: particle.tx + particle.windX * e + Math.sin(raw * 12 + particle.phase) * particle.flutter * raw,
+            y: particle.ty + particle.windY * e + Math.cos(raw * 8 + particle.phase) * particle.flutter * 0.45 * raw,
+            alpha: particle.alpha * Math.pow(1 - raw, 1.28),
+            size: particle.size * (1 + raw * 0.32)
+          };
+        }
+
+        function updateMessage(time) {
+          let opacity = 0;
+          let lift = 14;
+          if (time >= 3900 && time < 4850) {
+            const e = easeInOutSine((time - 3900) / 950);
+            opacity = e;
+            lift = mix(14, 0, e);
+          } else if (time >= 4850 && time < 6250) {
+            opacity = 1;
+            lift = 0;
+          } else if (time >= 6250 && time < 7500) {
+            const e = clamp((time - 6250) / 1250);
+            opacity = 1 - e;
+            lift = -8 * e;
+          }
+          message.style.opacity = opacity.toFixed(3);
+          message.style.transform = `translate(-50%, ${lift.toFixed(1)}px)`;
+        }
+
+        function render(now) {
+          const elapsed = now - startedAt;
+          const time = elapsed % CYCLE;
+          if (elapsed >= CYCLE && time < 20) buildScene();
+
+          drawBackground(now);
+          ctx.save();
+          ctx.globalCompositeOperation = "lighter";
+
+          const pulse = time >= 3900 && time < 6250 ? 1 + Math.sin((time - 3900) * 0.005) * 0.06 : 1;
+          for (const particle of particles) {
+            const state = particleState(particle, time);
+            if (state.alpha < 0.008 || state.x < -120 || state.x > width + 120 || state.y < -120 || state.y > height + 120) continue;
+            const [r, g, b] = particle.rgb;
+            const radius = state.size * pulse;
+
+            if (radius > 1.35) {
+              ctx.fillStyle = `rgba(${r},${g},${b},${state.alpha * 0.12})`;
+              ctx.beginPath();
+              ctx.arc(state.x, state.y, radius * 3.8, 0, TAU);
+              ctx.fill();
+            }
+
+            ctx.fillStyle = `rgba(${r},${g},${b},${state.alpha})`;
+            ctx.beginPath();
+            ctx.arc(state.x, state.y, Math.max(0.35, radius), 0, TAU);
+            ctx.fill();
+          }
+          ctx.restore();
+          updateMessage(time);
+          raf = requestAnimationFrame(render);
+        }
+
+        function restart(event) {
+          if (event && (event.target === fullscreen || fullscreen.contains(event.target))) return;
+          buildScene();
+          startedAt = performance.now();
+        }
+
+        fullscreen.addEventListener("click", async event => {
+          event.stopPropagation();
+          try {
+            if (!document.fullscreenElement) {
+              await document.documentElement.requestFullscreen();
+            } else {
+              await document.exitFullscreen();
+            }
+          } catch (_) {
+            restart();
+          }
+        });
+
+        document.addEventListener("pointerup", restart, { passive: true });
+        window.addEventListener("resize", resize, { passive: true });
+        window.addEventListener("orientationchange", () => setTimeout(resize, 120), { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) cancelAnimationFrame(raf);
+          else {
+            startedAt = performance.now();
+            raf = requestAnimationFrame(render);
+          }
+        });
+
+        resize();
+        raf = requestAnimationFrame(render);
+      })();
+    </script>
+  </body>
+</html>
