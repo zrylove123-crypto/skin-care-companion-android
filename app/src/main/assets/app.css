@@ -455,6 +455,16 @@ button {
   padding: 9px 13px;
   background: linear-gradient(transparent, rgba(251, 252, 250, 0.97) 22%);
 }
+body.keyboard-open .bottom-nav {
+  display: none;
+}
+body.keyboard-open .composer {
+  bottom: calc(var(--keyboard-inset, 0px) + 8px);
+  padding-bottom: max(9px, env(safe-area-inset-bottom));
+}
+body.keyboard-open .chat-screen {
+  padding-bottom: 112px;
+}
 .composer-row {
   display: flex;
   align-items: flex-end;

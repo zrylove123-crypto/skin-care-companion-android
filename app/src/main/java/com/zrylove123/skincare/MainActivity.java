@@ -19,6 +19,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.view.WindowManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,6 +43,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         preferences = getSharedPreferences("skin_native", MODE_PRIVATE);
         ReminderReceiver.createChannel(this);
 
@@ -146,7 +148,7 @@ public class MainActivity extends Activity {
 
     public class NativeBridge {
         @JavascriptInterface
-        public String appVersion() { return "1.1.0"; }
+        public String appVersion() { return "1.1.1"; }
 
         @JavascriptInterface
         public String getNativeSettings() {

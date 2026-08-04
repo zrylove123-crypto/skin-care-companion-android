@@ -593,6 +593,36 @@ function saveAi() {
   setConnection();
 }
 
+function setupKeyboardAvoidance() {
+  const draft = document.querySelector("#chat-draft");
+  const viewport = window.visualViewport;
+  const update = () => {
+    const focused = document.activeElement === draft;
+    const inset =
+      focused && viewport
+        ? Math.max(0, Math.round(window.innerHeight - viewport.height - viewport.offsetTop))
+        : 0;
+    document.documentElement.style.setProperty("--keyboard-inset", `${inset}px`);
+    document.body.classList.toggle("keyboard-open", focused);
+    if (focused) {
+      requestAnimationFrame(() => {
+        draft.scrollIntoView({ block: "nearest", inline: "nearest" });
+      });
+    }
+  };
+  draft.addEventListener("focus", () => {
+    update();
+    setTimeout(update, 120);
+    setTimeout(update, 350);
+  });
+  draft.addEventListener("blur", () => setTimeout(update, 120));
+  window.addEventListener("resize", update);
+  if (viewport) {
+    viewport.addEventListener("resize", update);
+    viewport.addEventListener("scroll", update);
+  }
+}
+
 document.querySelectorAll(".bottom-nav button").forEach((button) => {
   button.onclick = () => setTab(button.dataset.tab);
 });
@@ -654,3 +684,4 @@ document.querySelector("#ai-protocol").onchange = (event) => {
 loadNative();
 renderToday();
 setConnection();
+setupKeyboardAvoidance();
