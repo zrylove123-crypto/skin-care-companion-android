@@ -1,0 +1,39 @@
+name: 发布淡粉爱心网页
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pink-heart-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 读取网页
+        uses: actions/checkout@v4
+      - name: 准备公开网页
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: 上传网页
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - name: 发布网页
+        id: deployment
+        uses: actions/deploy-pages@v4
