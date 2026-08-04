@@ -1,0 +1,55 @@
+name: 生成护肤搭子APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 读取项目
+        uses: actions/checkout@v4
+
+      - name: 准备Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: 准备Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: 保留安装签名
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: skin-care-companion-signing-v1
+
+      - name: 构建APK
+        run: gradle --no-daemon :app:assembleDebug
+
+      - name: 整理安装包
+        run: cp app/build/outputs/apk/debug/app-debug.apk skin-care-companion.apk
+
+      - name: 保存构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: 护肤搭子-APK
+          path: skin-care-companion.apk
+
+      - name: 更新免登录下载版本
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view apk-latest >/dev/null 2>&1; then
+            gh release upload apk-latest skin-care-companion.apk --clobber
+          else
+            gh release create apk-latest skin-care-companion.apk --title "护肤搭子 Android" --notes "最新可安装版本。下载 skin-care-companion.apk 后直接安装。"
+          fi
