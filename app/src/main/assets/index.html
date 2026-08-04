@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#fbfcfa">
+  <title>护肤搭子</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div><p class="eyebrow">私人护肤搭子</p><h1 id="page-title">今天怎么护肤</h1></div>
+      <button class="day-pill" id="day-pill">第1天</button>
+    </header>
+
+    <section class="screen" id="today-screen">
+      <article class="phase-card">
+        <div class="phase-copy"><span id="phase-number">阶段 1</span><h2 id="phase-label">基础适应期</h2><p id="phase-hint">只做清洁、保湿和防晒</p></div>
+        <div class="progress-ring" id="progress-ring"><strong id="progress-value">0%</strong><small>今日</small></div>
+      </article>
+      <button class="shave-toggle" id="shave-toggle">
+        <span class="toggle-icon">⌁</span><span><strong>今天剃须了</strong><small id="shave-copy">点一下可切换</small></span><span class="switch"><i></i></span>
+      </button>
+      <div id="routine-list"></div>
+      <article class="body-note"><div class="note-icon">手</div><div><strong>身体与鸡皮</strong><p>洗澡后10%尿素薄涂手臂、腿外侧；赠品C乳用于手和身体干燥处。</p></div></article>
+    </section>
+
+    <section class="screen chat-screen hidden" id="chat-screen">
+      <div class="connection" id="connection"><span></span><b>AI接口等待安全配置</b></div>
+      <div class="messages" id="messages"></div>
+      <form class="composer" id="chat-form">
+        <div class="image-preview hidden" id="image-preview"><img alt="待发送照片"><button type="button">×</button></div>
+        <div class="composer-row">
+          <input hidden id="photo-input" type="file" accept="image/*" capture="environment">
+          <button type="button" class="camera-button" id="camera-button" aria-label="拍照">＋</button>
+          <textarea id="chat-draft" placeholder="告诉我今天皮肤怎么样…" rows="1"></textarea>
+          <button class="send-button" id="send-button">发送</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="screen progress-screen hidden" id="progress-screen">
+      <article class="checkin-card">
+        <p class="eyebrow">每日30秒</p><h2>今天皮肤感觉如何？</h2>
+        <div id="scales"></div>
+        <textarea id="checkin-note" placeholder="比如：鼻翼有点紧，下巴新长一颗痘"></textarea>
+        <button class="primary-button" id="save-checkin">保存今天记录</button>
+      </article>
+      <article class="history-card"><h3>最近记录</h3><div id="history-list"></div></article>
+    </section>
+
+    <section class="screen settings-screen hidden" id="settings-screen">
+      <article class="settings-card">
+        <h2>护理计划</h2>
+        <label><span>开始日期</span><input type="date" id="start-date"></label>
+        <label><span>早上提醒</span><input type="time" id="morning-time"></label>
+        <label><span>晚上提醒</span><input type="time" id="evening-time"></label>
+      </article>
+      <article class="settings-card action-card"><div><h2>手机提醒</h2><p>安卓本地提醒，关闭软件后也会保留。</p></div><button id="enable-notifications">开启/测试</button></article>
+      <article class="settings-card api-card">
+        <div class="api-heading"><div><h2>内置AI聊天</h2><p>密钥只保存在本机应用私有空间，不会写入聊天记录。</p></div><span id="ai-status">待连接</span></div>
+        <label class="stack-label"><span>接口类型</span><select id="ai-protocol"><option value="responses">OpenAI Responses</option><option value="chat_completions">国内/兼容接口</option></select></label>
+        <label class="stack-label"><span>HTTPS接口地址</span><input class="api-input" id="ai-endpoint" value="https://api.openai.com/v1/responses"></label>
+        <label class="stack-label"><span>模型名称</span><input class="api-input" id="ai-model" value="gpt-5.6-luna"></label>
+        <label class="stack-label"><span>API密钥</span><input class="api-input" id="ai-key" type="password" autocomplete="off" placeholder="只粘贴到这里"></label>
+        <button class="primary-button" id="save-ai">安全连接AI</button>
+        <button class="disconnect-button hidden" id="clear-ai">清除本机密钥</button>
+        <p class="setup-message" id="ai-message"></p>
+      </article>
+      <article class="privacy-card"><strong>你的记录属于你</strong><p>流程、打卡和聊天历史都保存在本机；照片只在你主动发送时用于当次分析。</p></article>
+      <article class="version-card">护肤搭子 Android v<span id="app-version">1.0.0</span></article>
+    </section>
+
+    <nav class="bottom-nav" aria-label="主要导航">
+      <button class="active" data-tab="today"><span>✓</span><small>今天</small></button>
+      <button data-tab="chat"><span>◌</span><small>聊天</small></button>
+      <button data-tab="progress"><span>▥</span><small>记录</small></button>
+      <button data-tab="settings"><span>⚙</span><small>设置</small></button>
+    </nav>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
