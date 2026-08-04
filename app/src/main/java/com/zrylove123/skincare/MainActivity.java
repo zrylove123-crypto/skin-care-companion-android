@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
         settings.setAllowContentAccess(true);
         settings.setMediaPlaybackRequiresUserGesture(true);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        settings.setUserAgentString(settings.getUserAgentString() + " SkinCareCompanion/1.0");
+        settings.setUserAgentString(settings.getUserAgentString() + " HealthCompanion/1.1");
 
         webView.addJavascriptInterface(new NativeBridge(), "SkinNative");
         webView.setWebViewClient(new WebViewClient() {
@@ -146,7 +146,7 @@ public class MainActivity extends Activity {
 
     public class NativeBridge {
         @JavascriptInterface
-        public String appVersion() { return "1.0.1"; }
+        public String appVersion() { return "1.1.0"; }
 
         @JavascriptInterface
         public String getNativeSettings() {
@@ -233,10 +233,12 @@ public class MainActivity extends Activity {
         }
     }
 
-    private static final String SYSTEM_PROMPT = "你是刘智群的私人护肤搭子，主要用简明、可靠的中文和他沟通，语气自然，可以偶尔称呼他为 bro。\n\n"
-        + "已知情况：男性，偏油皮；鼻部皮脂丝和轻度堵塞；下巴容易受剃须刺激；脸颊有稳定的浅褐色点和肤色不均；鼻旁深色点长期稳定；眉间和耳朵不痒；头皮偶尔痒但没有白屑或油屑。没有看到严重痤疮。\n\n"
-        + "当前产品与计划：CeraVe泡沫洁面、CeraVe PM乳、赠品C乳、理肤泉绿标控油防晒、宝拉2%水杨酸、珀莱雅双抗4.0、身体10%尿素。第1—14天只用清洁/PM乳/防晒；第15—28天周一周四晚局部水杨酸；第29—42天周二周五周日早加双抗；第43天起双抗耐受后可每天早上使用。水杨酸保持每周两晚；剃须当天及之后24小时不用。\n\n"
-        + "回答规则：优先结合当天阶段、剃须、出油、干燥和刺激记录给出具体下一步；不擅自增加一堆产品；照片不清楚时说明不确定并指导重拍；不把色素点直接诊断为疾病；快速变化、出血、破溃、持续疼痛、明显肿胀或大片皮疹时建议线下皮肤科；答案尽量300字内，先结论再说做法。";
+    private static final String SYSTEM_PROMPT = "你是刘智群的私人健康搭子，兼顾护肤、减脂、饮食和训练。主要用简明、可靠的中文沟通，语气自然，可以偶尔称呼他为bro。你不是医生或营养师，不把估计说成诊断。\n\n"
+        + "个人情况：28岁男性，身高177cm，当前155斤，家用体脂秤约25%，目标125斤（对应BMI约20.0，不是18）。平时约0点睡、8:30起，非运动日约4000步，运动日10000步以上；久坐约6小时；有健身房和教练，每周能练4—5次、每次约1小时，会练手臂、肩、背和腿，无已知运动伤痛。早餐通常2个鸡蛋、偶尔米皮；午餐常吃牛肉和无油煎蛋或普通外食；目前过午不食；不能做饭；不喝奶茶和酒，偶尔喝不超过约100千卡的饮料。\n\n"
+        + "健康保护：自述有轻度高血压和轻度脂肪肝；无高尿酸、糖尿病及其他已知疾病。默认建议每周减1—2斤，首月主目标6—8斤，可把10斤作为冲刺上限，但不支持脱水、泻药、来路不明减肥药、极端断食或带病硬练。第一周水分下降可以较快，之后以7天趋势判断。力量训练发力时提醒呼气、不憋气、不冲极限；每周至少150分钟中等有氧可分散完成。血压达到180/120或以上时先休息1分钟复测；若仍高并伴胸痛、气短、剧烈头痛、麻木无力、视力或说话异常，建议立即拨打120；无症状也应尽快联系医生。连续头晕、晕厥、心悸、胸痛、异常气短或训练表现明显下滑时暂停激进减脂并就医。\n\n"
+        + "减脂回答规则：优先结合最新体重、7天趋势、血压、步数、睡眠、训练和饥饿记录；对餐食照片只能给区间估算，不假装精确热量；外食重点是少油少盐、酱汁分开、足量蔬菜和蛋白质。可以不强制吃晚餐，但晚间训练后或明显饥饿、发虚时建议少量高蛋白食物，不鼓励硬扛。除非用户主动要求，不一次塞太多规则。\n\n"
+        + "护肤情况：偏油皮；鼻部皮脂丝和轻度堵塞；下巴容易受剃须刺激；脸颊有稳定浅褐色点和肤色不均；鼻旁深色点长期稳定；眉间和耳朵不痒；头皮偶尔痒但没有白屑或油屑。当前产品为CeraVe泡沫洁面、CeraVe PM乳、赠品C乳、理肤泉绿标控油防晒、宝拉2%水杨酸、珀莱雅双抗4.0、身体10%尿素。水杨酸每周两晚，剃须当天及之后24小时不用。\n\n"
+        + "护肤回答规则：结合当天阶段、剃须、出油、干燥和刺激记录；不擅自增加一堆产品；照片不清楚时说明不确定并指导重拍；不把色素点直接诊断为疾病；快速变化、出血、破溃、持续疼痛、明显肿胀或大片皮疹时建议线下皮肤科。答案通常300字内，先结论再说做法。";
 
     private JSONObject responsesRequest(JSONObject input, String model) throws Exception {
         JSONArray messages = input.optJSONArray("messages");
@@ -244,13 +246,16 @@ public class MainActivity extends Activity {
         if (messages != null) {
             for (int i = 0; i < messages.length(); i++) {
                 JSONObject message = messages.getJSONObject(i);
-                if (i == messages.length() - 1 && !input.optString("image").isEmpty()) {
+                boolean last = i == messages.length() - 1;
+                String text = message.optString("content");
+                if (last) text += "\n今日状态：" + input.optJSONObject("context");
+                if (last && !input.optString("image").isEmpty()) {
                     JSONArray content = new JSONArray();
-                    content.put(new JSONObject().put("type", "input_text").put("text", message.optString("content") + "\n今日状态：" + input.optJSONObject("context")));
+                    content.put(new JSONObject().put("type", "input_text").put("text", text));
                     content.put(new JSONObject().put("type", "input_image").put("image_url", input.optString("image")));
                     outgoing.put(new JSONObject().put("role", "user").put("content", content));
                 } else {
-                    outgoing.put(new JSONObject().put("role", message.optString("role")).put("content", message.optString("content")));
+                    outgoing.put(new JSONObject().put("role", message.optString("role")).put("content", text));
                 }
             }
         }
@@ -268,13 +273,16 @@ public class MainActivity extends Activity {
         if (messages != null) {
             for (int i = 0; i < messages.length(); i++) {
                 JSONObject message = messages.getJSONObject(i);
-                if (i == messages.length() - 1 && !input.optString("image").isEmpty()) {
+                boolean last = i == messages.length() - 1;
+                String text = message.optString("content");
+                if (last) text += "\n今日状态：" + input.optJSONObject("context");
+                if (last && !input.optString("image").isEmpty()) {
                     JSONArray content = new JSONArray();
-                    content.put(new JSONObject().put("type", "text").put("text", message.optString("content") + "\n今日状态：" + input.optJSONObject("context")));
+                    content.put(new JSONObject().put("type", "text").put("text", text));
                     content.put(new JSONObject().put("type", "image_url").put("image_url", new JSONObject().put("url", input.optString("image"))));
                     outgoing.put(new JSONObject().put("role", "user").put("content", content));
                 } else {
-                    outgoing.put(new JSONObject().put("role", message.optString("role")).put("content", message.optString("content")));
+                    outgoing.put(new JSONObject().put("role", message.optString("role")).put("content", text));
                 }
             }
         }

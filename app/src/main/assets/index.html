@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#fbfcfa">
-  <title>护肤搭子</title>
+  <title>智群健康搭子</title>
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
   <main class="app-shell">
     <header class="topbar">
-      <div><p class="eyebrow">私人护肤搭子</p><h1 id="page-title">今天怎么护肤</h1></div>
+      <div><p class="eyebrow">私人健康搭子</p><h1 id="page-title">今天怎么护肤</h1></div>
       <button class="day-pill" id="day-pill">第1天</button>
     </header>
 
@@ -50,6 +50,64 @@
       <article class="history-card"><h3>最近记录</h3><div id="history-list"></div></article>
     </section>
 
+    <section class="screen weight-screen hidden" id="weight-screen">
+      <article class="weight-hero">
+        <div>
+          <p class="eyebrow">三个月减脂计划</p>
+          <h2><span id="current-weight">155.0</span><small> 斤</small></h2>
+          <p>目标125斤 · BMI目标约20.0</p>
+        </div>
+        <div class="weight-progress">
+          <strong id="weight-progress-value">0%</strong>
+          <span>已完成</span>
+        </div>
+      </article>
+
+      <div class="weight-stats">
+        <article><span>已减</span><strong id="weight-lost">0.0斤</strong></article>
+        <article><span>还差</span><strong id="weight-left">30.0斤</strong></article>
+        <article><span>当前BMI</span><strong id="current-bmi">24.7</strong></article>
+      </div>
+
+      <article class="safety-card">
+        <strong>首月主目标6—8斤 · 冲刺上限10斤</strong>
+        <p>第一周可能多掉一些水分；第二周起尽量控制在每周1—2斤。不靠脱水和极端断食硬追，先到147斤左右就已经很有价值。</p>
+      </article>
+
+      <article class="health-log-card">
+        <div class="section-heading"><div><p class="eyebrow">每日1分钟</p><h2>晨起记录</h2></div><span id="health-log-date"></span></div>
+        <div class="health-grid">
+          <label><span>体重（斤）*</span><input id="health-weight" type="number" min="90" max="220" step="0.1" inputmode="decimal"></label>
+          <label><span>腰围（cm，可后补）</span><input id="health-waist" type="number" min="50" max="160" step="0.1" inputmode="decimal"></label>
+          <label><span>收缩压/高压</span><input id="health-sys" type="number" min="70" max="240" inputmode="numeric"></label>
+          <label><span>舒张压/低压</span><input id="health-dia" type="number" min="40" max="160" inputmode="numeric"></label>
+          <label><span>今日步数</span><input id="health-steps" type="number" min="0" max="80000" step="100" inputmode="numeric"></label>
+          <label><span>昨晚睡眠（小时）</span><input id="health-sleep" type="number" min="0" max="15" step="0.5" inputmode="decimal"></label>
+          <label><span>今天训练</span><select id="health-trained"><option value="no">休息/未训练</option><option value="strength">力量训练</option><option value="cardio">有氧训练</option><option value="both">力量＋有氧</option></select></label>
+          <label><span>饥饿感</span><select id="health-hunger"><option value="0">不饿</option><option value="1">轻微</option><option value="2">正常</option><option value="3">很饿</option><option value="4">头晕/发虚</option></select></label>
+        </div>
+        <textarea id="health-note" placeholder="可选：今天吃了什么、训练内容、身体感觉"></textarea>
+        <div class="bp-message hidden" id="bp-message"></div>
+        <button class="primary-button" id="save-health">保存今日减脂记录</button>
+      </article>
+
+      <article class="trend-card"><div class="section-heading"><div><p class="eyebrow">只看趋势，不怕波动</p><h2>体重走势</h2></div><span id="weekly-rate"></span></div><div id="weight-chart"></div><div id="weight-history"></div></article>
+
+      <article class="plan-card">
+        <p class="eyebrow">你的每周训练框架</p><h2>4次力量＋2—3次短有氧</h2>
+        <div class="plan-row"><b>力量日</b><span>照教练安排练手、肩、背、腿；其中2—3次结束后加15—25分钟椭圆机或坡走。</span></div>
+        <div class="plan-row"><b>非力量日</b><span>1次40分钟快走；至少保留1天真正休息。第一周日均6500步，再逐步到8000步。</span></div>
+        <div class="plan-row"><b>高血压保护</b><span>发力时呼气，不憋气，不冲极限重量；热身和冷身各5—10分钟。</span></div>
+      </article>
+
+      <article class="plan-card food-card">
+        <p class="eyebrow">不用做饭也能执行</p><h2>你的外食规则</h2>
+        <div class="plan-row"><b>早餐</b><span>2个鸡蛋保留，最好加无糖奶/无糖酸奶；米皮偶尔吃，不把它当每天主食。</span></div>
+        <div class="plan-row"><b>午餐</b><span>点餐说“少油少盐、酱汁分开”：2拳蔬菜＋1—2掌心肉/鱼/蛋＋1拳主食，少喝汤。</span></div>
+        <div class="plan-row"><b>晚上</b><span>不强制吃正餐；但晚间训练后或明显饥饿时，可加无糖酸奶/牛奶、鸡蛋或即食鸡胸，别硬扛到头晕。</span></div>
+      </article>
+    </section>
+
     <section class="screen settings-screen hidden" id="settings-screen">
       <article class="settings-card">
         <h2>护理计划</h2>
@@ -70,13 +128,14 @@
         <p class="setup-message" id="ai-message"></p>
       </article>
       <article class="privacy-card"><strong>你的记录属于你</strong><p>流程、打卡和聊天历史都保存在本机；照片只在你主动发送时用于当次分析。</p></article>
-      <article class="version-card">护肤搭子 Android v<span id="app-version">1.0.1</span></article>
+      <article class="version-card">智群健康搭子 Android v<span id="app-version">1.1.0</span></article>
     </section>
 
     <nav class="bottom-nav" aria-label="主要导航">
       <button class="active" data-tab="today"><span>✓</span><small>今天</small></button>
       <button data-tab="chat"><span>◌</span><small>聊天</small></button>
       <button data-tab="progress"><span>▥</span><small>记录</small></button>
+      <button data-tab="weight"><span>▰</span><small>减脂</small></button>
       <button data-tab="settings"><span>⚙</span><small>设置</small></button>
     </nav>
   </main>

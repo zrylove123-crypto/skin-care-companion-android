@@ -28,10 +28,10 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         android.app.Notification notification = new android.app.Notification.Builder(context, CHANNEL_ID)
             .setSmallIcon(com.zrylove123.skincare.R.drawable.ic_launcher)
-            .setContentTitle("护肤搭子｜" + (morning ? "早间提醒" : "晚间提醒"))
+            .setContentTitle("健康搭子｜" + (morning ? "早间提醒" : "晚间提醒"))
             .setContentText(morning
-                ? "洗脸 → 按需PM乳 → 防晒，点开看今天是否需要双抗。"
-                : "洁面 → PM乳，点开确认今晚是否需要水杨酸。")
+                ? "晨起称重和量血压，再完成洗脸、保湿与防晒。"
+                : "完成晚间护肤，顺手记录步数、训练和饥饿感。")
             .setContentIntent(pending)
             .setAutoCancel(true)
             .build();
@@ -43,10 +43,10 @@ public class ReminderReceiver extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,
-                "每日护肤提醒",
+                "每日健康提醒",
                 NotificationManager.IMPORTANCE_DEFAULT
             );
-            channel.setDescription("按设置的早晚时间提醒护肤");
+            channel.setDescription("按设置的早晚时间提醒护肤与健康记录");
             ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE))
                 .createNotificationChannel(channel);
         }
