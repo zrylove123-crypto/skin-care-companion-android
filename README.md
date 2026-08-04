@@ -16,4 +16,4 @@
 
 在仓库 Releases 下载 `skin-care-companion.apk`，允许浏览器“安装未知应用”后安装。
 
-AI 聊天需要在“设置”中填写 HTTPS 接口、模型名和 API 密钥。可使用 OpenAI Responses 接口，或选择国内/兼容接口。不要把密钥写进源码或提交到仓库。
+AI 聊天默认使用国内可访问的阿里云百炼兼容接口和通义千问视觉模型 qwen3-vl-plus。安装后只需在“设置”中创建并粘贴自己的 API 密钥；接口地址和模型名已预填，也可切换至 OpenAI Responses。不要把密钥写进源码、聊天或提交到仓库。

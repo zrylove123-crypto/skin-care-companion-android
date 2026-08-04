@@ -59,17 +59,18 @@
       </article>
       <article class="settings-card action-card"><div><h2>手机提醒</h2><p>安卓本地提醒，关闭软件后也会保留。</p></div><button id="enable-notifications">开启/测试</button></article>
       <article class="settings-card api-card">
-        <div class="api-heading"><div><h2>内置AI聊天</h2><p>密钥只保存在本机应用私有空间，不会写入聊天记录。</p></div><span id="ai-status">待连接</span></div>
-        <label class="stack-label"><span>接口类型</span><select id="ai-protocol"><option value="responses">OpenAI Responses</option><option value="chat_completions">国内/兼容接口</option></select></label>
-        <label class="stack-label"><span>HTTPS接口地址</span><input class="api-input" id="ai-endpoint" value="https://api.openai.com/v1/responses"></label>
-        <label class="stack-label"><span>模型名称</span><input class="api-input" id="ai-model" value="gpt-5.6-luna"></label>
+        <div class="api-heading"><div><h2>内置AI聊天</h2><p>默认使用国内可访问的通义千问视觉模型，文字和皮肤照片都能发。密钥只保存在本机。</p></div><span id="ai-status">待连接</span></div>
+        <a class="api-link" href="https://bailian.console.aliyun.com/cn-beijing/?tab=model">① 打开阿里云百炼创建API密钥 ↗</a>
+        <label class="stack-label"><span>接口类型</span><select id="ai-protocol"><option value="chat_completions" selected>阿里云百炼（国内）</option><option value="responses">OpenAI Responses</option></select></label>
+        <label class="stack-label"><span>HTTPS接口地址</span><input class="api-input" id="ai-endpoint" value="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"></label>
+        <label class="stack-label"><span>模型名称</span><input class="api-input" id="ai-model" value="qwen3-vl-plus"></label>
         <label class="stack-label"><span>API密钥</span><input class="api-input" id="ai-key" type="password" autocomplete="off" placeholder="只粘贴到这里"></label>
         <button class="primary-button" id="save-ai">安全连接AI</button>
         <button class="disconnect-button hidden" id="clear-ai">清除本机密钥</button>
         <p class="setup-message" id="ai-message"></p>
       </article>
       <article class="privacy-card"><strong>你的记录属于你</strong><p>流程、打卡和聊天历史都保存在本机；照片只在你主动发送时用于当次分析。</p></article>
-      <article class="version-card">护肤搭子 Android v<span id="app-version">1.0.0</span></article>
+      <article class="version-card">护肤搭子 Android v<span id="app-version">1.0.1</span></article>
     </section>
 
     <nav class="bottom-nav" aria-label="主要导航">

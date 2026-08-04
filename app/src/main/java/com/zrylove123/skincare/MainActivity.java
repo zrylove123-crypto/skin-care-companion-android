@@ -146,7 +146,7 @@ public class MainActivity extends Activity {
 
     public class NativeBridge {
         @JavascriptInterface
-        public String appVersion() { return "1.0.0"; }
+        public String appVersion() { return "1.0.1"; }
 
         @JavascriptInterface
         public String getNativeSettings() {
@@ -155,9 +155,9 @@ public class MainActivity extends Activity {
                 result.put("morning", preferences.getString("morning", "08:30"));
                 result.put("evening", preferences.getString("evening", "23:00"));
                 result.put("aiConfigured", !preferences.getString("ai_key", "").isEmpty());
-                result.put("aiEndpoint", preferences.getString("ai_endpoint", "https://api.openai.com/v1/responses"));
-                result.put("aiModel", preferences.getString("ai_model", "gpt-5.6-luna"));
-                result.put("aiProtocol", preferences.getString("ai_protocol", "responses"));
+                result.put("aiEndpoint", preferences.getString("ai_endpoint", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"));
+                result.put("aiModel", preferences.getString("ai_model", "qwen3-vl-plus"));
+                result.put("aiProtocol", preferences.getString("ai_protocol", "chat_completions"));
             } catch (Exception ignored) { }
             return result.toString();
         }
@@ -189,7 +189,7 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public String saveAiConfig(String protocol, String endpoint, String model, String key) {
-            protocol = protocol == null ? "responses" : protocol.trim();
+            protocol = protocol == null ? "chat_completions" : protocol.trim();
             endpoint = endpoint == null ? "" : endpoint.trim();
             model = model == null ? "" : model.trim();
             key = key == null ? "" : key.trim();
@@ -216,9 +216,9 @@ public class MainActivity extends Activity {
                 try {
                     String key = preferences.getString("ai_key", "");
                     if (key.isEmpty()) throw new Exception("请先到设置页连接AI接口。流程、打卡和提醒不受影响。");
-                    String protocol = preferences.getString("ai_protocol", "responses");
-                    String endpoint = preferences.getString("ai_endpoint", "https://api.openai.com/v1/responses");
-                    String model = preferences.getString("ai_model", "gpt-5.6-luna");
+                    String protocol = preferences.getString("ai_protocol", "chat_completions");
+                    String endpoint = preferences.getString("ai_endpoint", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions");
+                    String model = preferences.getString("ai_model", "qwen3-vl-plus");
                     JSONObject input = new JSONObject(payload);
                     JSONObject request = "chat_completions".equals(protocol)
                         ? compatibleRequest(input, model)
